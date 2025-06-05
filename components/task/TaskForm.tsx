@@ -32,7 +32,7 @@ export default function TaskForm({
             name,
             description,
             status,
-            assignedUserId: assignedUserId || null,
+            assignedUserId: assignedUserId === "none" ? null : assignedUserId
           }),
         });
         if (!res.ok) throw new Error('Error creating task');
@@ -115,7 +115,7 @@ export default function TaskForm({
           onChange={(e) => setAssignedUserId(e.target.value || undefined)}
         >
 
-        <option value={undefined} key={"nobody"}>Nobody</option>
+        <option value={"none"} key={"none"}>Nobody</option>
           {users.map((user) => (
             <option key={user.id} value={user.id}>
               {user.username}

@@ -59,7 +59,7 @@ const TaskList: React.FC<TaskListProps> = ({ projectId, users, projectName }) =>
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-5">
       {tasks.length === 0 ? (
         <p className="text-gray-500">No tasks found for this project.</p>
       ) : (

@@ -104,6 +104,8 @@ export default function EditProjectPage({ project, usersList }: any) {
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+      <ButtonBackProjectList />
+
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Project</h1>
       <EditProjectForm
         project={project}
@@ -111,7 +113,6 @@ export default function EditProjectPage({ project, usersList }: any) {
         handleSave={handleSave}
         saving={saving}
       />
-      <ButtonBackProjectList />
     </div>
   );
 }

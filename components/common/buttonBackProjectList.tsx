@@ -4,10 +4,10 @@ export default function ButtonBackProjectList () {
   const router = useRouter();
 
   return (
-    <div className="flex justify-between mt-12">
+    <div className="flex justify-between mb-6">
       <button
         onClick={() => router.push('/projects')}
-        className="bg-gray-200 w-full text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+        className="text-blue-600 hover:underline focus:outline-none"
       >
         ← Back to project list
       </button>

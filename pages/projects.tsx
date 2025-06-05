@@ -125,7 +125,8 @@ export default function AreaPrivata({ user, projects }: {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg mb-10">
+
       <h1 className="text-3xl font-bold text-gray-800">Benvenuto, {user.username}!</h1>
 
 

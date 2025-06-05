@@ -50,21 +50,26 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function TaskPage({ users, projectId, projectName }){
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg space-y-6">
-      <div className="flex items-center gap-2 text-sm text-gray-600">
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+
+      <ButtonBackProjectList />
+
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-5">
         <span className="font-medium">Project:</span>
         <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
           {projectName}
         </span>
       </div>
 
-      <h2 className="text-2xl font-bold text-gray-800">Tasks List</h2>
-      <TaskList 
-        projectId={projectId}
-        users={users}
-        projectName={projectName}
-      />
-
+      <div className="border-t pt-8 mt-8">
+        <h2 className="text-2xl font-bold text-gray-800">Tasks List</h2>
+        <TaskList 
+          projectId={projectId}
+          users={users}
+          projectName={projectName}
+        />
+      </div>
+      
       <div className="border-t pt-8 mt-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Task</h2>
         <TaskForm 
@@ -73,9 +78,6 @@ export default function TaskPage({ users, projectId, projectName }){
         />
       </div>
 
-      <div className="pt-6">
-        <ButtonBackProjectList />
-      </div>
     </div>
   );
 }
