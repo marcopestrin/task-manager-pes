@@ -3,7 +3,12 @@ import { useState } from 'react';
 import { Status } from '../../interfaces/task';
 import { eventBus } from '../../lib/eventBus';
 
-export default function TaskForm({ projectId, users, task, closeEditModal }) {
+export default function TaskForm({ 
+  projectId, 
+  users, 
+  task = undefined, // default value because is not mandatory --> typescript fix
+  closeEditModal = undefined // default value because is not mandatory --> typescript fix
+}) {
 
   const [isAModify] = useState(task ? true : false);
   const [name, setName] = useState(task ? task.name : '');

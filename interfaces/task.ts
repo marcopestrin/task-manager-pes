@@ -5,10 +5,6 @@ interface User {
   username: string;
 }
 
-export interface CreateTaskFormProps {
-  projectId: string;
-  users: User[];
-}
 
 export interface Task {
   id: string;
@@ -16,10 +12,16 @@ export interface Task {
   description: string;
   status: 'TODO' | 'IN_PROGRESS' | 'DONE';
   assignedUserId: string | null;
+  assignedUser?: User | null | undefined;
 }
 
 export interface TaskListProps {
   projectId: string;
   users: User[];
   projectName: string;
+}
+
+export interface CreateTaskFormProps {
+  projectId: string;
+  users: User[];
 }

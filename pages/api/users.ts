@@ -4,11 +4,14 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { query } = req.query;
+  const searchTerm = Array.isArray(query) ? query[0] : query;
+
   const users = await prisma.user.findMany({
     where: {
-      OR: [
-        { username: { contains: query as string, mode: 'insensitive' } },
-      ],
+      username: {
+        contains: searchTerm,
+        // mode: 'insensitive'
+      }
     },
     select: {
       id: true,

@@ -103,11 +103,11 @@ const TaskList: React.FC<TaskListProps> = ({ projectId, users, projectName }) =>
 
                 <span className="text-sm text-gray-700">
                   Assigned to:{' '}
-                  {task.assignedUser?.username ? (
-                    <strong>{task.assignedUser?.username}</strong>
-                  ) : (
-                    <strong className="text-red-600">Unassigned</strong>
-                  )}
+                    {task.assignedUser?.username ? (
+                      <strong>{task.assignedUser.username}</strong>
+                    ) : (
+                      <strong className="text-red-600">Unassigned</strong>
+                    )}
                 </span>
               </div>
             </li>

@@ -25,7 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    console.log({ tasks })
     return res.status(200).json({ tasks });
   } catch (error) {
     console.error('Error fetching tasks:', error);

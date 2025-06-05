@@ -49,7 +49,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       },
     });
-    console.log({ projects})
     return { 
       props: {
         user: decoded,
