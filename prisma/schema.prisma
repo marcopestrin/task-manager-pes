@@ -1,0 +1,79 @@
+// schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation("UserAccount", fields: [userId], references: [id], onDelete: Cascade)
+  hashedPassword    String
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model User {
+  id              String     @id @default(cuid())
+  username        String     @unique
+  account         Account?   @relation("UserAccount")
+  createdProjects Project[]  @relation("ProjectOwner")
+  tasksAssigned   Task[]     @relation("TaskAssignee")
+  projectAccess   ProjectUser[]
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Project {
+  id            String      @id @default(cuid())
+  name          String
+  description   String?
+  projectCode   String      @unique // Codice alfanumerico univoco
+  ownerId       String
+  owner         User        @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  tasks         Task[]
+  users         ProjectUser[] // Utenti che hanno accesso al progetto
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+// Tabella di giunzione per la relazione N:M tra Progetti e Utenti (accesso)
+model ProjectUser {
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@id([projectId, userId])
+  @@index([userId]) // Per query veloci sui progetti di un utente
+}
+
+model Task {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  status         Status   @default(TODO)
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedUserId String?  // Può essere non assegnato o assegnato a un utente specifico del progetto
+  assignedUser   User?    @relation("TaskAssignee", fields: [assignedUserId], references: [id])
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  DONE
+}
