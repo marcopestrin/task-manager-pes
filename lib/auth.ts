@@ -21,7 +21,7 @@ export async function redirectIfAuthenticated(context: GetServerSidePropsContext
     // if token is valid redirect to restricted area
     return {
       redirect: {
-        destination: '/area-privata',
+        destination: '/projects',
         permanent: false,
       },
     };

@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
 
     if (!project || project.ownerId !== decoded.userId) {
-      return { redirect: { destination: '/area-privata', permanent: false } };
+      return { redirect: { destination: '/projects', permanent: false } };
     }
 
     const usersList = await prisma.user.findMany({
@@ -92,7 +92,7 @@ export default function EditProjectPage({ project, usersList }: any) {
 
     if (res.ok) {
       alert('Progetto aggiornato');
-      router.push('/area-privata');
+      router.push('/projects');
     } else {
       alert('Errore durante il salvataggio');
     }

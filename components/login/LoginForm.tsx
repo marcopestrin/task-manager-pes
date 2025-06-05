@@ -22,7 +22,7 @@ export default function LoginForm() {
       if (!res.ok) {
         setError(data.error || "Error during login");
       } else {
-        window.location.href = "/area-privata";
+        window.location.href = "/projects";
       }
     } catch (err) {
       console.error(err);
