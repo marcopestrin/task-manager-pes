@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react';
 import { TaskListProps, Task } from '../../interfaces/task';
 import { eventBus } from '../../lib/eventBus';
-
+import { statusColor, accessTypeColor } from '../common/labelsColor';
 import ModalEditTask from './ModalEditTask';
-
-const statusColor = {
-  TODO: 'bg-gray-200 text-gray-700',
-  IN_PROGRESS: 'bg-yellow-200 text-yellow-800',
-  DONE: 'bg-green-200 text-green-800',
-};
 
 const TaskList: React.FC<TaskListProps> = ({ projectId, users, projectName }) => {
   const [tasks, setTasks] = useState<Task[]>([]);

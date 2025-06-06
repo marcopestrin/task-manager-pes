@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Project from '../../interfaces/project';
+import { accessTypeColor } from '../common/labelsColor';
 
 interface ProjectListProps {
   list: Project[];
@@ -30,11 +31,17 @@ export default function ProjectList({ list }: ProjectListProps) {
           {list.map((p) => (
             <li
               key={p.id}
-              className="border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white"
+              className="relative border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white"
             >
+              <span className={`absolute top-5 right-2 inline-block text-xs px-2 py-1 rounded-full font-medium ${accessTypeColor[p.accessType]}`}>
+                {p.accessType === 'owner' ? 'Owner' : 'Participant'}
+              </span>
+
               <div>
                 <h3 className="text-lg font-bold text-blue-700">{p.name}</h3>
-                <p className="text-sm text-gray-500 mb-1">Code: {p.projectCode}</p>
+                <p className="text-sm text-gray-500 mb-1">
+                  Code: <strong>{p.projectCode}</strong> created by <strong>{p.owner.username}</strong>
+                </p>
 
                 <div className="bg-gray-100 p-2 rounded text-sm text-gray-700 whitespace-pre-wrap">
                   {p.description || 'No description'}
@@ -54,23 +61,27 @@ export default function ProjectList({ list }: ProjectListProps) {
                 )}
 
                 <div className="mt-4 flex gap-2">
-                  <Link
-                    href={`/edit-project/${p.id}`}
-                    className="bg-gray-200 text-gray-800 px-3 py-1.5 text-sm rounded hover:bg-gray-300 transition"
-                  >
-                    Edit Project
-                  </Link>
+                  { p.accessType === "owner" ?
+                    <>
+                      <Link
+                        href={`/edit-project/${p.id}`}
+                        className="bg-gray-200 text-gray-800 px-3 py-1.5 text-sm rounded hover:bg-gray-300 transition"
+                      >
+                        Edit Project
+                      </Link>
 
-                  <button
-                    className="text-red-600 text-sm border border-red-600 px-3 py-1 rounded hover:bg-red-50 transition"
-                    onClick={async () => {
-                      if (confirm(`Are you sure you want to delete the project "${p.name}"?`)) {
-                        deleteProject(p.id)
-                      }
-                    }}
-                  >
-                    Delete Project
-                  </button>
+                      <button
+                        className="text-red-600 text-sm border border-red-600 px-3 py-1 rounded hover:bg-red-50 transition"
+                        onClick={async () => {
+                          if (confirm(`Are you sure you want to delete the project "${p.name}"?`)) {
+                            deleteProject(p.id)
+                          }
+                        }}
+                      >
+                        Delete Project
+                      </button>
+                    </> : <></>
+                  }
 
                   <Link
                     href={`/handle-tasks/${p.id}/`}

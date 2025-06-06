@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
@@ -15,16 +15,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const auth = await requireAuthentication(context);
   if ('redirect' in auth) return auth;
 
-  const cookies = context.req.headers.cookie;
-  const parsed = cookie.parse(cookies);
-  const token = parsed.token;
-
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(cookie.parse(context.req.headers.cookie).token, JWT_SECRET);
 
-    const projects = await prisma.project.findMany({
+    let projects = await prisma.project.findMany({
       where: {
-        ownerId: decoded.userId,
+        OR: [ 
+          { ownerId: decoded.userId },
+          {
+            users: {
+              some: {
+                userId: decoded.userId, //shared visibility
+              },
+            },
+          },
+        ],
       },
       orderBy: { createdAt: 'desc' },
       select: {
@@ -32,6 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         name: true,
         description: true,
         projectCode: true,
+        ownerId: true,
         tasks: {
           select: {
             name: true, // mi interessa sapere solo il nome del task
@@ -47,8 +53,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             },
           },
         },
+        owner: {
+          select: {
+            username: true,
+          },
+        },
       },
-    });
+    })
+    
+    projects = projects.map(project => ({
+      ...project,
+      accessType: project.ownerId === decoded.userId ? 'owner' : 'participant',
+    }));
+
     return { 
       props: {
         user: decoded,
@@ -65,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function AreaPrivata({ user, projects }: {
+export default function Projects({ user, projects }: {
   user: { username: string };
   projects: Project[];
 }) {
@@ -109,7 +126,14 @@ export default function AreaPrivata({ user, projects }: {
 
       if (res.ok) {
         const newProject = await res.json();
-        setProjectList([newProject, ...projectList]);
+        // add the new project into the local state without having a get query.
+        setProjectList([
+          {
+            ...newProject,
+            accessType: 'owner' // it will always be owner since I'm creating it. I need it to show the label in the list
+          },
+          ...projectList
+        ]);
         return true
       } else {
         alert('Error creating project');
@@ -128,7 +152,6 @@ export default function AreaPrivata({ user, projects }: {
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg mb-10">
 
       <h1 className="text-3xl font-bold text-gray-800">Benvenuto, {user.username}!</h1>
-
 
       <ProjectList
         list={projectList}

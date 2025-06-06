@@ -18,6 +18,10 @@ export default interface Project {
   description?: string | null;
   users?: ProjectUser[];
   tasks?: ProjectTask[];
+  accessType: 'owner' | 'participant'
+  owner: {
+    username: string;
+  };
 }
 
 
