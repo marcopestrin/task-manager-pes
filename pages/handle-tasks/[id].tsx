@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import jwt from 'jsonwebtoken';
-import ButtonBackProjectList from '../../components/common/buttonBackProjectList';
+import * as cookie from 'cookie';
+import ButtonBackProjectList from '../../components/common/ButtonBackProjectList';
 import TaskForm from '../../components/task/TaskForm';
 import TaskList from '../../components/task/TaskList';
-import * as cookie from 'cookie';
 import { accessTypeColor } from '../../components/common/labelsColor';
+import Footer from '../../components/footer/Footer';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
@@ -55,50 +56,64 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
-  return {
-    props: {
-      projectId,
-      users,
-      projectName: projectName.name,
-      accessType: decodedUserId === projectName.ownerId ? 'owner' : 'participant'
-    },
-  };
+  try {
+    return {
+      props: {
+        projectId,
+        users,
+        projectName: projectName.name,
+        accessType: decodedUserId === projectName.ownerId ? 'owner' : 'participant'
+      },
+    };
+  } catch (e) {
+    // might be project id wrong. return back to list
+    return {
+      redirect: {
+        destination: '/projects',
+        permanent: false,
+      },
+    }
+  }
+
 };
 
 export default function TaskPage({ users, projectId, projectName, accessType }){
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div>
+      <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
 
-      <ButtonBackProjectList />
+        <ButtonBackProjectList />
 
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-5">
-        <span className="font-medium">Project:</span>
-        <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
-          {projectName}
-        </span>
-        <span className={`top-5 right-2 inline-block text-xs px-2 py-1 rounded-full font-medium ${accessTypeColor[accessType]}`}>
-          {accessType === 'owner' ? 'Owner' : 'Participant'}
-        </span> 
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-5">
+          <span className="font-medium">Project:</span>
+          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+            {projectName}
+          </span>
+          <span className={`top-5 right-2 inline-block text-xs px-2 py-1 rounded-full font-medium ${accessTypeColor[accessType]}`}>
+            {accessType === 'owner' ? 'Owner' : 'Participant'}
+          </span> 
+        </div>
+
+        <div className="border-t pt-8 mt-8">
+          <h2 className="text-2xl font-bold text-gray-800">Tasks List</h2>
+          <TaskList 
+            projectId={projectId}
+            users={users}
+            projectName={projectName}
+          />
+        </div>
+        
+        <div className="border-t pt-8 mt-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Task</h2>
+          <TaskForm 
+            projectId={projectId}
+            users={users}
+          />
+        </div>
       </div>
 
-      <div className="border-t pt-8 mt-8">
-        <h2 className="text-2xl font-bold text-gray-800">Tasks List</h2>
-        <TaskList 
-          projectId={projectId}
-          users={users}
-          projectName={projectName}
-        />
-      </div>
-      
-      <div className="border-t pt-8 mt-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Task</h2>
-        <TaskForm 
-          projectId={projectId}
-          users={users}
-        />
-      </div>
-
+      <Footer />
     </div>
   );
 }

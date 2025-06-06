@@ -4,9 +4,10 @@ import jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
 import { PrismaClient } from '@prisma/client';
 import { requireAuthentication } from '../lib/auth';
-import ProjectList from '../components/project/projectList';
-import NewProjectForm from '../components/project/newProjectForm';
+import ProjectList from '../components/project/ProjectList';
+import NewProjectForm from '../components/project/NewProjectForm';
 import Project, { AddProjectInput } from '../interfaces/project';
+import Footer from '../components/footer/Footer';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
@@ -91,23 +92,6 @@ export default function Projects({ user, projects }: {
 
   if (!user) return <p>Unauthorized access</p>;
 
-  const handleLogout = async () => {
-    try {
-      const res = await fetch('/api/logout', {
-        method: 'POST',
-      });
-
-      if (res.ok) {
-        // Logout success
-        window.location.href = '/login';
-      } else {
-        alert('Error while logging out');
-      }
-    } catch (error) {
-      alert('Network error while logging out');
-      console.error(error);
-    }
-  };
 
   const handleAddProject = async ({ name, description }: AddProjectInput): Promise<boolean> => {
     if (!name.trim()) {
@@ -149,27 +133,23 @@ export default function Projects({ user, projects }: {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg mb-10">
+    <>
+      <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg mb-10">
 
-      <h1 className="text-3xl font-bold text-gray-800">Benvenuto, {user.username}!</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Benvenuto, {user.username}!</h1>
 
-      <ProjectList
-        list={projectList}
-      />
+        <ProjectList
+          list={projectList}
+        />
 
-      <NewProjectForm 
-        handleAddProject={handleAddProject}
-        loading={loading}
-      />
+        <NewProjectForm 
+          handleAddProject={handleAddProject}
+          loading={loading}
+        />
 
-      <div className="mt-10">
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-        >
-          Logout
-        </button>
       </div>
-    </div>
+      <Footer />
+    </>
+  
   );
 }

@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import * as cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { requireAuthentication } from '../../lib/auth';
-import EditProjectForm from '../../components/project/editProject';
-import ButtonBackProjectList from '../../components/common/buttonBackProjectList';
+import EditProjectForm from '../../components/project/EditProject';
+import ButtonBackProjectList from '../../components/common/ButtonBackProjectList';
+import Footer from '../../components/footer/Footer';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
@@ -103,16 +104,19 @@ export default function EditProjectPage({ project, usersList }: any) {
 
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <ButtonBackProjectList />
+    <div>
+      <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+        <ButtonBackProjectList />
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Project</h1>
-      <EditProjectForm
-        project={project}
-        usersList={usersList}
-        handleSave={handleSave}
-        saving={saving}
-      />
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Project</h1>
+        <EditProjectForm
+          project={project}
+          usersList={usersList}
+          handleSave={handleSave}
+          saving={saving}
+        />
+      </div>
+      <Footer />
     </div>
   );
 }
