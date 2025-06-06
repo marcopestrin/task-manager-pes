@@ -32,3 +32,4 @@ export default function ModalEditTask({ setEditingTask, task, users, projectName
     </div>
   )
 }
+
