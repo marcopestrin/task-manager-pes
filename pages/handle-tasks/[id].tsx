@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
+import { requireAuthentication } from '../../lib/auth';
 import ButtonBackProjectList from '../../components/common/ButtonBackProjectList';
 import TaskForm from '../../components/task/TaskForm';
 import TaskList from '../../components/task/TaskList';
@@ -17,6 +18,8 @@ const getUserIdByToken = (v) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const auth = await requireAuthentication(context);
+  if ('redirect' in auth) return auth;
 
   const decodedUserId = getUserIdByToken(context.req.headers.cookie);
   const projectId = context.params?.id as string;
