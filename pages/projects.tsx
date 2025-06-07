@@ -18,21 +18,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const decoded = jwt.verify(cookie.parse(context.req.headers.cookie).token, JWT_SECRET);
+    const { userId } = decoded;
 
     let projects = await prisma.project.findMany({
       where: {
         OR: [ 
-          { ownerId: decoded.userId },
+          { ownerId: userId },
           {
             users: {
               some: {
-                userId: decoded.userId, //shared visibility
+                userId, //shared visibility
               },
             },
           },
         ],
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
       select: {
         id: true,
         name: true,
@@ -64,13 +65,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     
     projects = projects.map(project => ({
       ...project,
-      accessType: project.ownerId === decoded.userId ? 'owner' : 'participant',
+      accessType: project.ownerId === userId ? 'owner' : 'participant',
     }));
+
+    const { username } = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        username: true,
+      },
+    });
 
     return { 
       props: {
         user: decoded,
-        projects
+        projects,
+        username // i need this information because when i add a new project i avoid to call api get for getting the list. it's handle locally by state
       }
     };
   } catch (err) {
@@ -83,9 +94,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function Projects({ user, projects }: {
+export default function Projects({ user, projects, username }: {
   user: { username: string };
   projects: Project[];
+  username: string;
 }) {
   const [projectList, setProjectList] = useState(projects || []);
   const [loading, setLoading] = useState(false);
@@ -112,11 +124,13 @@ export default function Projects({ user, projects }: {
         const newProject = await res.json();
         // add the new project into the local state without having a get query.
         setProjectList([
+          ...projectList,
+          // last project added at the end of list
           {
             ...newProject,
+            owner: { username },
             accessType: 'owner' // it will always be owner since I'm creating it. I need it to show the label in the list
           },
-          ...projectList
         ]);
         return true
       } else {
