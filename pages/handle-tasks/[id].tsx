@@ -12,7 +12,6 @@ import Footer from '../../components/footer/Footer';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
 
-
 const getUserIdByToken = (v) => {
   return jwt.verify(cookie.parse(v).token, JWT_SECRET).userId;
 }

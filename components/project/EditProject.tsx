@@ -14,7 +14,6 @@ export default function EditProjectForm({
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredUsers, setFilteredUsers] = useState(usersList || []);
 
-
     useEffect(() => {
       if (!searchTerm) {
         setFilteredUsers(usersList);
@@ -90,13 +89,7 @@ export default function EditProjectForm({
         </div>
         <div className="mt-12">
           <button
-            onClick={() => {
-              handleSave({
-                name,
-                description,
-                selectedUsers
-              })
-            }}
+            onClick={() => handleSave({ name, description, selectedUsers }) }
             disabled={saving}
             className="w-full bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
           >

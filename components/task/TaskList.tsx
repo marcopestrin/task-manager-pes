@@ -13,9 +13,7 @@ const TaskList: React.FC<TaskListProps> = ({ projectId, users, projectName }) =>
   const fetchTasks = async () => {
     try {
       const response = await fetch(`/api/tasks?projectId=${projectId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch tasks');
-      }
+      if (!response.ok) throw new Error('Failed to fetch tasks');
       const data = await response.json();
       setTasks(data.tasks);
     } catch (err) {

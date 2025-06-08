@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import * as cookie from 'cookie';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,6 +13,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     secure: process.env.NODE_ENV === 'production',
   }));
 
-  
   res.status(200).json({ message: 'Logged out' });
 }

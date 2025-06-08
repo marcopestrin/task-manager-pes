@@ -25,7 +25,7 @@ export default function ProjectList({ list }: ProjectListProps) {
     }
   }
 
-  const fetchProject = async () => {
+  const fetchProjects = async () => {
     try {
       const response = await fetch(`/api/projects`);
       if (!response.ok) throw new Error('Failed to fetch projects');
@@ -38,7 +38,7 @@ export default function ProjectList({ list }: ProjectListProps) {
 
   useEffect(() => {
     setProjects(list || []); // for refreshing list when i add new project
-    const refresh = () => fetchProject();
+    const refresh = () => fetchProjects();
     eventBus.subscribe('newUserInvolved', refresh);
     return () => {
       eventBus.unsubscribe('newUserInvolved', refresh);

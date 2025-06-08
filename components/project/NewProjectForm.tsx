@@ -1,17 +1,17 @@
 import { useState } from 'react';
 
 export default function NewProjectForm({ handleAddProject, loading }) {
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newProjectDescription, setNewProjectDescription] = useState('');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
   const createProject = () => {
     const result: boolean = handleAddProject({
-      name: newProjectName,
-      description: newProjectDescription
+      name,
+      description
     });
     if (result) {
-      setNewProjectName('');
-      setNewProjectDescription('');
+      setName('');
+      setDescription('');
     }
   }
   return (
@@ -20,14 +20,14 @@ export default function NewProjectForm({ handleAddProject, loading }) {
       <input
         type="text"
         placeholder="Project name"
-        value={newProjectName}
-        onChange={(e) => setNewProjectName(e.target.value)}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         className="border border-gray-300 p-2 w-full rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <textarea
         placeholder="Description (optional)"
-        value={newProjectDescription}
-        onChange={(e) => setNewProjectDescription(e.target.value)}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
         className="border border-gray-300 p-2 w-full rounded-md resize-none mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         rows={4}
       />

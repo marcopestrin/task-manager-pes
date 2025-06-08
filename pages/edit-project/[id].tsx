@@ -17,15 +17,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if ('redirect' in auth) return auth;
 
   const { id } = context.params!;
-  const cookies = context.req.headers.cookie;
   
-  if (!cookies) return { redirect: { destination: '/login', permanent: false } };
-
-  const parsed = cookie.parse(cookies);
-  const token = parsed.token;
+  const token = cookie.parse(context.req.headers.cookie).token;
   
-  if (!token) return { redirect: { destination: '/login', permanent: false } };
-
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
 

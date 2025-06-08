@@ -5,12 +5,11 @@ interface User {
   username: string;
 }
 
-
 export interface Task {
   id: string;
   name: string;
   description: string;
-  status: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  status: Status;
   assignedUserId: string | null;
   assignedUser?: User | null | undefined;
 }

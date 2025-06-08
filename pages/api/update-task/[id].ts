@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { id } = req.query;
 
   if (typeof id !== 'string') {
-    return res.status(400).json({ error: 'Invalid task ID' });
+    return res.status(400).json({ error: 'Invalid task Id' });
   }
   if (req.method !== 'PATCH') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -23,15 +23,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!existingTask) {
       return res.status(404).json({ error: 'Task not found' });
     }
-
-
-    // if (assignedUserId) {
-    //   const userExists = await prisma.user.findUnique({ where: { id: assignedUserId } });
-    //   if (!userExists) {
-    //     return res.status(400).json({ error: 'Assigned user does not exist' });
-    //   }
-    // }
-
 
     const updatedTask = await prisma.task.update({
       where: { id },

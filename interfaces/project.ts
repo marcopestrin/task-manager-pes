@@ -24,7 +24,6 @@ export default interface Project {
   };
 }
 
-
 export interface AddProjectInput {
   name: string;
   description: string;

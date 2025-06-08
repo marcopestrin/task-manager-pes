@@ -11,13 +11,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ error: 'Username e password obbligatori' });
+    return res.status(400).json({ error: 'username and password are mandatory' });
   }
 
   try {
     const existingUser = await prisma.user.findUnique({ where: { username } });
     if (existingUser) {
-      return res.status(400).json({ error: 'Username già in uso' });
+      return res.status(400).json({ error: 'Username already in use' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     return res.status(201).json({
-      message: 'Utente created',
+      message: 'user created',
       userId: user.id
     });
   } catch (err) {
