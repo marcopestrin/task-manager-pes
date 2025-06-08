@@ -36,7 +36,7 @@ export default function TaskForm({
           }),
         });
         if (!res.ok) throw new Error('Error creating task');
-        closeEditModal(null)
+        closeEditModal(null);
 
       } else {
         const res = await fetch('/api/create-task', {

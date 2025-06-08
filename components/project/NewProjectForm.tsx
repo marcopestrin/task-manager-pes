@@ -16,7 +16,7 @@ export default function NewProjectForm({ handleAddProject, loading }) {
   }
   return (
     <div className="mt-12 border-t pt-6">
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Add a new project</h2>
+      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Create a new project</h2>
       <input
         type="text"
         placeholder="Project name"

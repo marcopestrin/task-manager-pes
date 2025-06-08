@@ -1,12 +1,16 @@
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Project from '../../interfaces/project';
 import { accessTypeColor } from '../common/labelsColor';
+import { eventBus } from '../../lib/eventBus';
 
 interface ProjectListProps {
   list: Project[];
 }
 
 export default function ProjectList({ list }: ProjectListProps) {
+  
+  const [projects, setProjects] = useState<Project[]>(list || []);
 
   const deleteProject = async(id: string) => {
     const res = await fetch(`/api/delete-project/${id}`, {
@@ -14,21 +18,43 @@ export default function ProjectList({ list }: ProjectListProps) {
     });
 
     if (res.ok) {
-      window.location.reload(); // oppure redirect a lista progetti
+      // local list without deleted item
+      setProjects((prev) => prev.filter((project) => project.id !== id));
     } else {
       alert('Failed to delete project.');
     }
   }
 
+  const fetchProject = async () => {
+    try {
+      const response = await fetch(`/api/projects`);
+      if (!response.ok) throw new Error('Failed to fetch projects');
+      const data = await response.json();
+      setProjects(data.projects);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    setProjects(list || []); // for refreshing list when i add new project
+    const refresh = () => fetchProject();
+    eventBus.subscribe('newUserInvolved', refresh);
+    return () => {
+      eventBus.unsubscribe('newUserInvolved', refresh);
+    };
+  }, [list]);
+
+
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">Your projects</h2>
 
-      {list.length === 0 ? (
+      {projects.length === 0 ? (
         <p className="text-gray-500">No projects created.</p>
       ) : (
         <ul className="space-y-4">
-          {list.map((p) => (
+          {projects.map((p) => (
             <li
               key={p.id}
               className="relative border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white"

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TaskListProps, Task } from '../../interfaces/task';
 import { eventBus } from '../../lib/eventBus';
-import { statusColor, accessTypeColor } from '../common/labelsColor';
+import { statusColor } from '../common/labelsColor';
 import ModalEditTask from './ModalEditTask';
 
 const TaskList: React.FC<TaskListProps> = ({ projectId, users, projectName }) => {
@@ -32,6 +32,7 @@ const TaskList: React.FC<TaskListProps> = ({ projectId, users, projectName }) =>
     eventBus.subscribe('taskDeleted', refresh);
     return () => {
       eventBus.unsubscribe('taskCreated', refresh);
+      eventBus.unsubscribe('taskDeleted', refresh);
     };
     
   }, [projectId]);

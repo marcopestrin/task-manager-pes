@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
@@ -8,6 +8,8 @@ import ProjectList from '../components/project/ProjectList';
 import NewProjectForm from '../components/project/NewProjectForm';
 import Project, { AddProjectInput } from '../interfaces/project';
 import Footer from '../components/footer/Footer';
+import AddExistingProject from '../components/project/AddExistingProject';
+import { getLitProjectsByUserId } from './api/projects';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
@@ -19,69 +21,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const decoded = jwt.verify(cookie.parse(context.req.headers.cookie).token, JWT_SECRET);
     const { userId } = decoded;
-
-    let projects = await prisma.project.findMany({
-      where: {
-        OR: [ 
-          { ownerId: userId },
-          {
-            users: {
-              some: {
-                userId, //shared visibility
-              },
-            },
-          },
-        ],
-      },
-      orderBy: { createdAt: 'asc' },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        projectCode: true,
-        ownerId: true,
-        tasks: {
-          select: {
-            name: true, // mi interessa sapere solo il nome del task
-          },
-        },
-        users: {
-          select: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-              },
-            },
-          },
-        },
-        owner: {
-          select: {
-            username: true,
-          },
-        },
-      },
-    })
-    
-    projects = projects.map(project => ({
-      ...project,
-      accessType: project.ownerId === userId ? 'owner' : 'participant',
-    }));
-
-    const { username } = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        username: true,
-      },
-    });
-
+    const projects = await getLitProjectsByUserId(userId);
     return { 
       props: {
         user: decoded,
         projects,
-        username // i need this information because when i add a new project i avoid to call api get for getting the list. it's handle locally by state
       }
     };
   } catch (err) {
@@ -94,16 +38,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 };
 
-export default function Projects({ user, projects, username }: {
-  user: { username: string };
+export default function Projects({ user, projects }: {
+  user: { username: string, userId: string };
   projects: Project[];
-  username: string;
 }) {
   const [projectList, setProjectList] = useState(projects || []);
   const [loading, setLoading] = useState(false);
 
   if (!user) return <p>Unauthorized access</p>;
-
+  const { username, userId } = user ;
 
   const handleAddProject = async ({ name, description }: AddProjectInput): Promise<boolean> => {
     if (!name.trim()) {
@@ -154,6 +97,10 @@ export default function Projects({ user, projects, username }: {
 
         <ProjectList
           list={projectList}
+        />
+
+        <AddExistingProject 
+          userId={userId}
         />
 
         <NewProjectForm 
