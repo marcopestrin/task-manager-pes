@@ -5,11 +5,11 @@ const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
-  if (typeof id !== 'string') {
-    return res.status(400).json({ error: 'Invalid task Id' });
-  }
   if (req.method !== 'PATCH') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+  if (typeof id !== 'string') {
+    return res.status(400).json({ error: 'Invalid task Id' });
   }
   
   const { name, description, status, assignedUserId } = req.body;
