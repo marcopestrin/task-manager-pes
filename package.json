@@ -1,6 +1,6 @@
 {
-  "name": "nextjs-tailwind-ts-app",
-  "version": "1.0.0",
+  "name": "task-manager-pes",
+  "version": "1.1.0",
   "author": "Marco Pestrin",
   "scripts": {
     "dev": "next dev",
